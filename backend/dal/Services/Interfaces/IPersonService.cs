@@ -1,15 +1,11 @@
-using System.Collections.Generic;
 using Pims.Dal.Entities;
 
 namespace Pims.Dal.Services
 {
-    /// <summary>
-    /// Interface that provides a service layer to administer persons within the datasource.
-    /// </summary>
-    public interface IPersonService : IService<PimsPerson>
+    public interface IPersonService
     {
-        IEnumerable<PimsPerson> GetAll();
-        PimsPerson Get(long id);
-        PimsPerson Add(PimsPerson add);
+        PimsPerson GetPerson(long id);
+        PimsPerson AddPerson(PimsPerson person, bool userOverride);
+        PimsPerson UpdatePerson(PimsPerson person, long rowVersion);
     }
 }

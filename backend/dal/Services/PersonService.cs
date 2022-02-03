@@ -1,82 +1,63 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Pims.Core.Extensions;
 using Pims.Dal.Entities;
+using Pims.Dal.Helpers.Extensions;
+using Pims.Dal.Security;
 
 namespace Pims.Dal.Services
 {
-    /// <summary>
-    /// Provides a service layer to administrate persons within the datasource.
-    /// </summary>
-    public class PersonService : BaseService<PimsPerson>, IPersonService
+    public class PersonService : BaseService, IPersonService
     {
-        #region Constructors
+        readonly Repositories.IPersonRepository _personRepository;
+
         /// <summary>
         /// Creates a new instance of a PersonService, and initializes it with the specified arguments.
         /// </summary>
-        /// <param name="dbContext"></param>
         /// <param name="user"></param>
-        /// <param name="service"></param>
         /// <param name="logger"></param>
-        public PersonService(PimsContext dbContext, ClaimsPrincipal user, IPimsService service, ILogger<PersonService> logger, IMapper mapper) : base(dbContext, user, service, logger, mapper) { }
-        #endregion
-
-        #region Methods
-        /// <summary>
-        /// Get a page of persons from the datasource.
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="quantity"></param>
-        /// <param name="sort"></param>
-        /// <returns></returns>
-        public IEnumerable<PimsPerson> GetAll()
+        /// <param name="personRepository"></param>
+        public PersonService(ClaimsPrincipal user, ILogger<BaseService> logger, Repositories.IPersonRepository personRepository) : base(user, logger)
         {
-            return this.Context.PimsPeople.AsNoTracking().ToArray();
+            _personRepository = personRepository;
         }
 
-        /// <summary>
-        /// Get the person for the specified 'id'.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <exception cref="KeyNotFoundException">Person does not exists for the specified 'id'.</exception>
-        /// <returns></returns>
-        public PimsPerson Get(long id)
+        public PimsPerson GetPerson(long id)
         {
-            return this.Context.PimsPeople
-                .Include(p => p.PimsPersonAddresses)
-                    .ThenInclude(pa => pa.Address)
-                    .ThenInclude(a => a.Country)
-                .Include(p => p.PimsPersonAddresses)
-                    .ThenInclude(pa => pa.Address)
-                    .ThenInclude(a => a.ProvinceState)
-                .Include(p => p.PimsPersonAddresses)
-                    .ThenInclude(pa => pa.AddressUsageTypeCodeNavigation)
-                .Include(p => p.PimsPersonOrganizations)
-                    .ThenInclude(o => o.Organization)
-                .Include(p => p.PimsContactMethods)
-                    .ThenInclude(cm => cm.ContactMethodTypeCodeNavigation)
-                .Where(p => p.PersonId == id)
-                .FirstOrDefault() ?? throw new KeyNotFoundException();
+            this.User.ThrowIfNotAuthorized(Permissions.ContactView);
+            return _personRepository.Get(id);
         }
 
-        /// <summary>
-        /// Add the specified person contact to the datasource.
-        /// </summary>
-        /// <param name="add"></param>
-        /// <returns></returns>
-        public PimsPerson Add(PimsPerson add)
+        public PimsPerson AddPerson(PimsPerson person, bool userOverride)
         {
-            add.ThrowIfNull(nameof(add));
-            this.Context.PimsPeople.Add(add);
-            this.Context.CommitTransaction();
+            person.ThrowIfNull(nameof(person));
+            this.User.ThrowIfNotAuthorized(Permissions.ContactAdd);
 
-            return Get(add.PersonId);
+            var createdPerson = _personRepository.Add(person, userOverride);
+            _personRepository.CommitTransaction();
+
+            return GetPerson(createdPerson.Id);
         }
 
-        #endregion
+        public PimsPerson UpdatePerson(PimsPerson person, long rowVersion)
+        {
+            person.ThrowIfNull(nameof(person));
+            this.User.ThrowIfNotAuthorized(Permissions.ContactEdit);
+            ValidateRowVersion(person.Id, rowVersion);
+
+            var updatedPerson = _personRepository.Update(person);
+            _personRepository.CommitTransaction();
+
+            return GetPerson(updatedPerson.Id);
+        }
+
+        public void ValidateRowVersion(long personId, long rowVersion)
+        {
+            if(_personRepository.GetRowVersion(personId) != rowVersion)
+            {
+                throw new DbUpdateConcurrencyException("You are working with an older version of this contact, please refresh the application and retry.");
+            }
+        }
     }
 }

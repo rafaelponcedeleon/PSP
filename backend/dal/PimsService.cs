@@ -16,74 +16,34 @@ namespace Pims.Dal
 
         #region Properties
         /// <summary>
-        /// get - The person service.
-        /// </summary>
-        public IPersonService Person { get { return _serviceProvider.GetService<IPersonService>(); } }
-
-        /// <summary>
-        /// get - The organization service.
-        /// </summary>
-        public IOrganizationService Organization { get { return _serviceProvider.GetService<IOrganizationService>(); } }
-
-        /// <summary>
         /// get - The user calling the service.
         /// </summary>
         public ClaimsPrincipal Principal { get; }
 
         /// <summary>
-        /// get - The property service.
+        /// get - The lease term service.
         /// </summary>
-        public IPropertyService Property { get { return _serviceProvider.GetService<IPropertyService>(); } }
-
+        public ILeaseTermService LeaseTermService { get { return _serviceProvider.GetService<ILeaseTermService>(); } }
         /// <summary>
-        /// get - The lookup service.
+        /// get - The lease payment service.
         /// </summary>
-        public ILookupService Lookup { get { return _serviceProvider.GetService<ILookupService>(); } }
-
-        /// <summary>
-        /// get - The user service.
-        /// </summary>
-        public IUserService User { get { return _serviceProvider.GetService<IUserService>(); } }
-
-        /// <summary>
-        /// get - The role service.
-        /// </summary>
-        public IRoleService Role { get { return _serviceProvider.GetService<IRoleService>(); } }
-
-        /// <summary>
-        /// get - The claim service.
-        /// </summary>
-        public IClaimService Claim { get { return _serviceProvider.GetService<IClaimService>(); } }
-
-        /// <summary>
-        /// get - The access request service.
-        /// </summary>
-        public IAccessRequestService AccessRequest { get { return _serviceProvider.GetService<IAccessRequestService>(); } }
-
-        /// <summary>
-        /// get - The tenant service.
-        /// </summary>
-        public ITenantService Tenant { get { return _serviceProvider.GetService<ITenantService>(); } }
-
+        public ILeasePaymentService LeasePaymentService { get { return _serviceProvider.GetService<ILeasePaymentService>(); } }
         /// <summary>
         /// get - The lease service.
         /// </summary>
-        public ILeaseService Lease { get { return _serviceProvider.GetService<ILeaseService>(); } }
-
+        public ILeaseService LeaseService { get { return _serviceProvider.GetService<ILeaseService>(); } }
         /// <summary>
-        /// get - The contact service.
+        /// get - The security deposit service.
         /// </summary>
-        public IContactService Contact { get { return _serviceProvider.GetService<IContactService>(); } }
-
+        public ISecurityDepositService SecurityDepositService { get { return _serviceProvider.GetService<ISecurityDepositService>(); } }
         /// <summary>
-        /// get - The insurance service.
+        /// get - The security deposit return service.
         /// </summary>
-        public IInsuranceService Insurance { get { return _serviceProvider.GetService<IInsuranceService>(); } }
-
+        public ISecurityDepositReturnService SecurityDepositReturnService { get { return _serviceProvider.GetService<ISecurityDepositReturnService>(); } }
         /// <summary>
-        /// get - The autocomplete service.
+        /// get - The person service.
         /// </summary>
-        public IAutocompleteService Autocomplete { get { return _serviceProvider.GetService<IAutocompleteService>(); } }
+        public IPersonService PersonService { get { return _serviceProvider.GetService<IPersonService>(); } }
         #endregion
 
         #region Constructors
@@ -96,26 +56,6 @@ namespace Pims.Dal
         {
             this.Principal = user;
             _serviceProvider = serviceProvider;
-        }
-
-        /// <summary>
-        /// Get the original value of the specified 'entity'.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entity"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public T OriginalValue<T>(object entity, string propertyName)
-        {
-            return this.User.OriginalValue<T>(entity, propertyName);
-        }
-
-        /// <summary>
-        /// Commit all saved changes as a single transaction.
-        /// </summary>
-        public void CommitTransaction()
-        {
-            this.User.CommitTransaction();
         }
         #endregion
     }

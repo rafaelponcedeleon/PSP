@@ -32,6 +32,7 @@ const AdministrationSubForm: React.FunctionComponent<IAdministrationSubFormProps
   const purposeTypes = getOptionsByType(API.LEASE_PURPOSE_TYPES);
   const initiatorTypes = getOptionsByType(API.LEASE_INITIATOR_TYPES);
   const responsibilityTypes = getOptionsByType(API.LEASE_RESPONSIBILITY_TYPES);
+  const regionTypes = getOptionsByType(API.REGION_TYPES);
 
   //clear the associated other fields if the corresponding type has its value changed from other to something else.
   useEffect(() => {
@@ -40,6 +41,10 @@ const AdministrationSubForm: React.FunctionComponent<IAdministrationSubFormProps
     }
     if (!!type && type !== 'OTHER') {
       setFieldValue('otherType', '');
+    }
+    if (!!type && !isLeaseCategoryVisible(type)) {
+      setFieldValue('otherCategoryType', '');
+      setFieldValue('categoryType', '');
     }
     if (!!purposeType && purposeType !== 'OTHER') {
       setFieldValue('otherPurposeType', '');
@@ -80,7 +85,13 @@ const AdministrationSubForm: React.FunctionComponent<IAdministrationSubFormProps
       </Row>
       <Row>
         <Col>
-          <InlineInput label="MOTI Region:" field="motiRegion" />
+          <InlineSelect
+            label="MOTI Region:"
+            field="region"
+            options={regionTypes}
+            placeholder="Select region"
+            required
+          />
         </Col>
       </Row>
       <Row>

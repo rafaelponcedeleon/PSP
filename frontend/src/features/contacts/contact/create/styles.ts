@@ -1,4 +1,6 @@
-import { Form as FormBase } from 'components/common/form';
+import { Button, Form as FormBase } from 'components/common/form';
+import { sharedFormStyles } from 'components/common/form/styles';
+import { FlexBox } from 'components/common/styles';
 import { Form as FormikForm } from 'formik';
 import styled from 'styled-components';
 
@@ -21,46 +23,16 @@ export const H3 = styled.h3`
   line-height: 2rem;
 `;
 
+export const CreateFormLayout = styled(FlexBox).attrs({ column: true })`
+  width: 100%;
+  overflow: auto;
+  padding-right: 1rem;
+`;
+
 // TODO: This is common form look-and-feel. Should be abstracted for all forms
 export const Form = styled(FormikForm)`
   &#createForm {
-    .form-control {
-      &.is-invalid {
-        border: 2px solid #d8292f;
-      }
-    }
-
-    .invalid-feedback {
-      color: #d8292f;
-    }
-
-    .form-group {
-      label {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: ${props => props.theme.css.formTextColor};
-        text-decoration: none solid rgb(33, 37, 41);
-        line-height: 2rem;
-      }
-
-      input,
-      select,
-      textarea {
-        border: 2px solid #606060;
-        border-radius: 4px;
-        background-color: #ffffff;
-        font-size: 1.6rem;
-        color: #000000;
-        text-decoration: none;
-      }
-
-      &.required {
-        label:after {
-          content: ' *';
-          color: red;
-        }
-      }
-    }
+    ${sharedFormStyles}
   }
 `;
 
@@ -72,6 +44,37 @@ export const FormLabel = styled(FormBase.Label)`
   line-height: 2rem;
 `;
 
+export const ErrorMessage = styled(FlexBox)`
+  width: auto;
+  color: #d8292f;
+  font-size: 1.6rem;
+  align-items: center;
+`;
+
+export const SectionMessage = styled(FlexBox)<{ appearance: 'information' | 'error' }>`
+  color: ${({ appearance = 'information' }) => (appearance === 'error' ? '#d8292f' : '#494949')};
+  font-size: 1.6rem;
+  text-decoration: none;
+`;
+
+export const RemoveButton = styled(Button).attrs({ variant: 'link' })`
+  && {
+    color: #aaaaaa;
+    text-decoration: none;
+    line-height: unset;
+    .text {
+      display: none;
+    }
+    &:hover {
+      color: #d8292f;
+      text-decoration: none;
+      .text {
+        display: inline;
+      }
+    }
+  }
+`;
+
 export const SubtleText = styled.span`
   font-size: 1.6rem;
   font-weight: 400;
@@ -80,6 +83,10 @@ export const SubtleText = styled.span`
   line-height: 2rem;
 `;
 
-export const PadBox = styled.div`
+export const ButtonGroup = styled(FlexBox)`
+  width: 100%;
   padding: 1rem 4rem;
+  gap: 2rem;
+  justify-content: flex-end;
+  align-items: stretch;
 `;

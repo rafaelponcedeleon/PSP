@@ -22,10 +22,11 @@ import {
 } from '..';
 import { LeaseSchema } from '../add/AddLeaseYupSchema';
 import LeaseEditButton from './LeaseEditButton';
-import Deposits from './LeasePages/deposits/Deposits';
+import DepositsContainer from './LeasePages/deposits/DepositsContainer';
 import DetailContainer from './LeasePages/details/DetailContainer';
 import ImprovementsContainer from './LeasePages/improvements/ImprovementsContainer';
 import InsuranceContainer from './LeasePages/insurance/InsuranceContainer';
+import PaymentsContainer from './LeasePages/payment/TermPaymentsContainer';
 import Surplus from './LeasePages/surplus/Surplus';
 import TenantContainer from './LeasePages/tenant/TenantContainer';
 
@@ -49,7 +50,6 @@ export enum LeasePageNames {
   IMPROVEMENTS = 'improvements',
   INSURANCE = 'insurance',
   DEPOSIT = 'deposit',
-  SECURITY = 'security',
   SURPLUS = 'surplus',
 }
 
@@ -82,7 +82,13 @@ export const leasePages: Map<LeasePageNames, ILeasePage> = new Map<LeasePageName
       description: 'The following is information related to the leasee or licensee',
     },
   ],
-  [LeasePageNames.PAYMENTS, { component: undefined, title: 'Payments' }],
+  [
+    LeasePageNames.PAYMENTS,
+    {
+      component: PaymentsContainer,
+      title: 'Payments',
+    },
+  ],
   [
     LeasePageNames.IMPROVEMENTS,
     {
@@ -99,8 +105,7 @@ export const leasePages: Map<LeasePageNames, ILeasePage> = new Map<LeasePageName
     },
   ],
   [LeasePageNames.INSURANCE, { component: InsuranceContainer, title: 'Insurance' }],
-  [LeasePageNames.DEPOSIT, { component: Deposits, title: 'Deposit' }],
-  [LeasePageNames.SECURITY, { component: undefined, title: 'Physical Security' }],
+  [LeasePageNames.DEPOSIT, { component: DepositsContainer, title: 'Deposit' }],
   [LeasePageNames.SURPLUS, { component: Surplus, title: 'Surplus Declaration' }],
 ]);
 
